@@ -14,14 +14,14 @@ from trojanparser import TrojanParser
 def getTrojanProbability(trojan_file):
 
     # generating the probability file
-    cmd = f'./prob junk.txt {trojan_file} > {trojan_file}_prob.txt'
+    prob_fp = f'{trojan_file.strip('.v')}_prob.txt'
+    cmd = f'./prob junk.txt {trojan_file} > {prob_fp}'
     os.system(cmd)
 
     # initializing the pandas dataframe
     df = pd.DataFrame(columns=['node_name', 'p_low', 'p_high', 'cc0', 'cc1', 'c0', 'scope_testability'], index=[])
 
     # parsing the probability file to get the pandas dataframe
-    prob_fp = f'{trojan_file}_prob.txt'
     fp = open(prob_fp, 'r')
     lines = fp.readlines()
 
@@ -41,9 +41,14 @@ def getTrojanProbability(trojan_file):
             node = re.findall(r'Gate :  (.*?)  CC', line)[0]                               # gets node name through regex              
             scope = re.findall(r'\s(\d+)', line)                                           # gets CC0, CC1, C0 values 
             scope_test = math.dist((int(scope[0]), int(scope[1]), int(scope[2])), (0,0,0)) # computes the scope testability
+            #scope_test = math.sqrt(int(scope[0])**2 + int(scope[1])**2 + int(scope[2])**2) # computes the scope for python 3.6 and less
             scope.append(scope_test)                                                       # append it to the scope list
             insert_loc = df.index[df['node_name']== node].tolist()[0]                      # finds insert location
             df.loc[insert_loc, ['cc0', 'cc1', 'c0', 'scope_testability']] = scope          # updates df with new values for the node
 
     fp.close()
-    return df   
+    return df
+
+# for testing
+d = getTrojanProbability(str(sys.argv[1]))
+print(d)
