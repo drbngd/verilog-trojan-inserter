@@ -15,7 +15,7 @@ def getTrojanProbability(trojan_file):
 
     # generating the probability file
     x = trojan_file.strip('.v')
-    prob_fp = f'{x}_prob.txt'
+    prob_fp = f'temp_prob.txt'
     cmd = f'./prob junk.txt {trojan_file} > {prob_fp}'
     os.system(cmd)
 
@@ -48,6 +48,7 @@ def getTrojanProbability(trojan_file):
             df.loc[insert_loc, ['cc0', 'cc1', 'c0', 'scope_testability']] = scope          # updates df with new values for the node
 
     fp.close()
+    os.system(f'rm -rf {prob_fp}')
     return df
 
 # for testing
