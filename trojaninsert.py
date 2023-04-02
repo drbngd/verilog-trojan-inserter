@@ -12,6 +12,58 @@ from trojanprobability import getTrojanProbability
 
 '''----------------------prereq functions----------------------'''
 
+# FUNCTION: to choose the trigger nodes
+def getTrigNodes(filename, num_input_nodes):
+    prob_df = getTrojanProbability(filename)
+    trigger_nodes = []
+
+    # asking user what he wants
+    print('Choose the parameter on which you want to select the trigger nodes:')
+    print('[1] P(low)')
+    print('[2] P(high)')
+    print('[3] Scope Value - \u221a(cc0^2 + cc1^2 + c0^2)')
+    
+    choice = 0
+    while True:
+        choice = int(input('Choose an option:'))
+        if choice == 1:
+            sort_param = 'p_low'
+            break
+        elif choice == 2:
+            sort_param = 'p_high'
+            break
+        elif choice == 3:
+            sort_param = 'scope_testability'
+            break
+        else:
+            print('Invalid choice. Try again.')
+
+
+    rndm = input('Do you want some % nodes to be selected randomly? (y/n):')
+    num_rndm = 0
+    if rndm == 'y' or rndm == 'Y':
+        num_rndm = int(input('Enter the percentage (without the % sign): '))
+    
+    num_rndm = int(num_rndm * num_input_nodes / 100)
+    num_not_rndm = num_input_nodes - num_rndm
+
+    # getting list of nodes sorted by choosen parameter
+    sorted_node_names = prob_df.sort_values(by=[sort_param])['node_name'].tolist()
+    # TODO: ask nikhil bh. about this step
+    nodes_to_avoid = clock_search_text + reset_search_text + circuit_outputs
+    for node in sorted_node_names:
+        if node not in nodes_to_avoid and len(trigger_nodes) <= num_not_rndm:
+            trigger_nodes.append(node)
+    print(nodes_to_avoid)
+    # adding the random nodes
+    nodes_to_avoid += trigger_nodes
+    random.shuffle(sorted_node_names) # shuffling the node names
+    for node in sorted_node_names:
+        if node not in nodes_to_avoid and len(trigger_nodes) <= num_input_nodes:
+            trigger_nodes.append(node)
+
+    return trigger_nodes
+
 # FUNCTION: to choose the payloads for us
 # it may or may not have any parameters
 # this is a dummy version
@@ -51,13 +103,17 @@ def checkPattern(pattern_list, str_list):
 '''----------------------code to get the initial values----------------------'''
 
 circuit_fp = sys.argv[1]
+print(circuit_fp)
 trojan_fp = sys.argv[2]
+os.system(f'cat {circuit_fp} > inserted_trojan.v')
+circuit_fp = f'inserted_trojan.v'
+print(circuit_fp)
  
-circuit_fp = 'inserted_trojan.v'
-trojan_fp = 'test_assertion.v'
-sensitivity_fp = 'sensitivity.txt'
+#circuit_fp = 'inserted_trojan.v'
+#trojan_fp = 'test_assertion.v'
+#sensitivity_fp = 'sensitivity.txt'
 # output_fp = 'inserted_trojan.v'
-os.system('cat s298.v > inserted_trojan.v')
+#os.system('cat s298.v > inserted_trojan.v')
 
 # getting all the trojan circuit components
 trojan_parser_obj = TrojanParser(trojan_fp)
@@ -70,6 +126,9 @@ trojan_reset = trojan_parser_obj.getTrojanReset()
 trojan_inputs.remove(trojan_clock) # removing clock from inputs
 trojan_inputs.remove(trojan_reset) # removing reset from inputs
 
+print('trojaninsert.py: All trojan data has been parsed.')
+print(len(trojan_inputs))
+
 # getting the main circuit components
 circuit_parser_obj = TrojanParser(circuit_fp)
 circuit_inputs = circuit_parser_obj.getCircuitInputs()
@@ -77,12 +136,15 @@ circuit_outputs = circuit_parser_obj.getCircuitOutputs()
 circuit_clock = ''
 circuit_reset = ''
 
+print('trojaninsert.py: All circuit data has been parsed.')
+
 clock_search_text = ['clk', 'CLK', 'clock', 'CLOCK', 'Clock']
 reset_search_text = ['reset', 'RESET', 'Reset']
 # getting circuit clock & reset from inputs
 circuit_clock = checkPattern(clock_search_text, circuit_inputs)
 circuit_reset = checkPattern(reset_search_text, circuit_inputs)
 
+print('trojaninsert.py: Clock and Reset has been recognized.')
 
 # getting the payloads and 
 # adding a 'prev' to the payload outputs
@@ -91,22 +153,32 @@ payload_prev = []
 for nodes in payloads:
     payload_prev.append(nodes+'_prev')
 
+print('trojaninsert.py: Payload nodes have been modified.')
+
 # getting the clock, reset, and trigger nodes additions
 to_add_clock = '\n assign ' + trojan_clock + ' = ' + circuit_clock + ';'
 to_add_reset = '\n assign ' + trojan_reset + ' = ' + circuit_reset + ';'
 to_add_trigger = ''
 
-trigger_nodes = selectTriggerNodes(sensitivity_fp, trojan_inputs)
+print('trojaninsert.py: Clock and Reset have been assigned.')
+
+# getting the trigger nodes additions
+trigger_nodes = getTrigNodes(circuit_fp, len(trojan_inputs))
 trigger_logic = []
 for i in range(len(trojan_inputs)):
     trigger_logic.append('assign ' + str(trojan_inputs[i]) + ' = ' + str(trigger_nodes[i]))
 
 to_add_trigger = '\n' + ';\n'.join(trigger_logic) + ';\n'
 
+#print(trigger_nodes)
+#print(trigger_logic)
 
+print('trojaninsert.py: Trigger nodes have been identified.')
 
 
 '''----------------------code to insert the trojan----------------------'''
+
+print('trojaninsert.py: TROJAN INSERTION BEGINS')
 
 # inserting trojan nodes & modified prev nodes as wire in circuit
 fp = open(circuit_fp, "r+")
@@ -164,75 +236,5 @@ fp.write(data)
 fp.truncate()
 fp.close()
 
-
-
-
-# identifying clk and reset
-
-
-
-# function to choose the trigger nodes
-def getTrigNodes(filename, num_nodes):
-    prob_df = getTrojanProbability(filename)
-    trigger_nodes_list = []
-
-    # asking user what he wants
-    print('Choose the parameter on which you want to select the trigger nodes:')
-    print('[1] P(low)')
-    print('[2] P(high)')
-    print('[3] Scope Value - √(cc0^2 + cc1^2 + c0^2)')
-    
-    choice = 0
-    while True:
-        choice = int(input('Choose an option:'))
-        if choice == 1:
-            sort_param = 'p_low'
-            break
-        elif choice == 2:
-            sort_param = 'p_high'
-            break
-        elif choice == 3:
-            sort_param = 'scope_testability'
-            break
-        else:
-            print('Invalid choice. Try again.')
-
-
-    rndm = input('Do you want some % nodes to be selected randomly? (y/n):')
-    num_rndm = 0
-    if rndm == 'y' or rndm == 'Y':
-        num_rndm = int(input('Enter the percentage (without the % sign): '))
-    
-    num_rndm = int(num_rndm * num_nodes / 100)
-    num_not_rndm = num_nodes - num_rndm
-
-    # getting list of nodes sorted by choosen parameter
-    sorted_node_names = prob_df.sort_values(by=[sort_param])['node_name'].tolist()
-    # TODO: ask nikhil bh. about this step
-    nodes_to_avoid = clock_search_text + reset_search_text + circuit_outputs
-    for node in sorted_node_names:
-        if node not in nodes_to_avoid and len(trigger_nodes) <= num_not_rndm:
-            trigger_nodes.append(node)
-
-    # adding the random nodes
-    nodes_to_avoid += trigger_nodes
-    random.shuffle(sorted_node_names) # shuffling the node names
-    for node in sorted_node_names:
-        if node not in nodes_to_avoid and len(trigger_nodes) <= num_nodes:
-            trigger_nodes.append(node)
-
-    return trigger_nodes
-
-
-    
-
-
-
-
-
-
-
-
-
-
+print('trojaninsert.py: TROJAN INSERTION COMPLETED')
 
