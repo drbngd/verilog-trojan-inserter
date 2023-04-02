@@ -14,7 +14,8 @@ from trojanparser import TrojanParser
 def getTrojanProbability(trojan_file):
 
     # generating the probability file
-    prob_fp = f'{trojan_file.strip('.v')}_prob.txt'
+    x = trojan_file.strip('.v')
+    prob_fp = f'{x}_prob.txt'
     cmd = f'./prob junk.txt {trojan_file} > {prob_fp}'
     os.system(cmd)
 
