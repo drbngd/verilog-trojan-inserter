@@ -7,7 +7,7 @@ This repo contains the necessary files to insert a trojan file into any circuit 
 Make sure that you have all of these files in the same directory:
 
 - trojaninsert.py
-- trojanparser.py
+- svcparser.py
 - trojanprobability.py
 - prob
 
