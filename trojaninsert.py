@@ -44,7 +44,11 @@ def getTrigNodes(filename, num_input_nodes):
     
     num_rndm = int(num_rndm * num_input_nodes / 100)
     num_not_rndm = num_input_nodes - num_rndm
+    
+    clock_search_text = ['clk', 'CLK', 'clock', 'CLOCK', 'Clock']
+    reset_search_text = ['reset', 'RESET', 'Reset']
 
+    
     # getting list of nodes sorted by choosen parameter
     sorted_node_names = prob_df.sort_values(by=[sort_param])['node_name'].tolist()
     # TODO: ask nikhil bh. about this step
