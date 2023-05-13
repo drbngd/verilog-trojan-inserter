@@ -25,16 +25,22 @@ def getTrojanProbability(trojan_file):
     # parsing the probability file to get the pandas dataframe
     fp = open(prob_fp, 'r')
     lines = fp.readlines()
+    
+    prob_pattern = r'(\w+)\s+\[(\d+(\.\d+)?)\s+(\d+(\.\d+)?)\]'
+    scoap_pattern = r'Gate\s*:\s*(\w+)\s*CC0\s*:\s*(\d+)\s*CC1\s*:\s*(\d+)\s*CO\s*:\s*(\d+)'
 
     for line in lines:
 
         # since Probability is displayed in the beginning of the generated file
         # hence, we first find probability values and add them to the data frame
         if 'Probabaility :=' in line:
-            node = re.findall(r'Probabaility :=  (.*?) ', line)                     # gets node name through regex
-            probs = re.findall(r'(\d.[0-9]+)', line)                                # gets probability through regex
-            new_row = {'node_name': node[0], 'p_low': probs[0], 'p_high': probs[1]} # new row to add to dataframe
-            df.loc[len(df.index)] = new_row                                         # appends new row to dataframe end
+            match = re.search(prob_pattern, line)
+            if match:
+                node = match.group(1)                    # gets node name through regex
+                probs_0 = float(match.group(2))                                # gets probability through regex
+                probs_1 = float(match.group(4))
+                new_row = {'node_name': node, 'p_low': probs_0, 'p_high': probs_1} # new row to add to dataframe
+                df.loc[len(df.index)] = new_row                                         # appends new row to dataframe end
         
         # scope values are displayed after the probability values,
         # so we update the particular node row with the scope values
@@ -48,7 +54,7 @@ def getTrojanProbability(trojan_file):
             df.loc[insert_loc, ['cc0', 'cc1', 'c0', 'scope_testability']] = scope          # updates df with new values for the node
     
     fp.close()
-    os.system(f'rm -rf {prob_fp}')     
+#    os.system(f'rm -rf {prob_fp}')     
     return df
 
 # for testing
