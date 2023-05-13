@@ -3,6 +3,14 @@
 ## About
 This repo contains the necessary files to insert a trojan file into any circuit file (verilog only).
 
+## Setup
+```
+git clone https://github.com/drbngd/trojaninsertion_pub.git
+cd trojaninsertion_pub
+chmod +x prob
+pip install pandas
+```
+
 ## Usage
 Make sure that you have all of these files in the same directory:
 
