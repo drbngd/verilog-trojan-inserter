@@ -92,6 +92,7 @@ circuit_fp = sys.argv[1]
 print(circuit_fp)
 trojan_fp = sys.argv[2]
 # os.system(f'cat {circuit_fp} > inserted_trojan.v')
+os.system('touch inserted_trojan.v')
 result_fp = f'inserted_trojan.v'
 print(circuit_fp)
 
