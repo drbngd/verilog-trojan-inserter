@@ -129,7 +129,7 @@ print('trojaninsert.py: All circuit files have been parsed.')
 
 '''----------------------start: getting trigger nodes & payloads----------------------'''
 # getting trigger nodes
-trigger_nodes = getTrigNodes(circuit_fp, len(trojan_inputs-2))
+trigger_nodes = getTrigNodes(circuit_fp, len(trojan_inputs)-2)
 
 print('trojaninsert.py: All trigger nodes have been fetched.')
 
