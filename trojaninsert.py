@@ -113,7 +113,7 @@ result_clock, result_reset = result_obj.getClockAndReset()
 # getting trojan data
 trojan_inputs = trojan_obj.getInputs()
 trojan_outputs = trojan_obj.getOutputs()
-trj_outputs_flat_list = [elem for sublist in trojan_outputs for elem in sublist]
+trj_outputs_flat_list = []
 trojan_wires = trojan_obj.getWires()
 trojan_registers = trojan_obj.getRegisters()
 trojan_clock, trojan_reset = trojan_obj.getClockAndReset()
@@ -164,6 +164,8 @@ for sublist in trojan_outputs:
         trojan_nodes_before.append(sublist[i])
         sublist[i] += '_trj'
         trojan_nodes_after.append(sublist[i])
+
+trj_outputs_flat_list = [elem for sublist in trojan_outputs for elem in sublist]
 
 for sublist in trojan_wires:
     for i in range(len(sublist)):
