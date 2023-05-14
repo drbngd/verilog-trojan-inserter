@@ -95,7 +95,9 @@ circuit_fp = sys.argv[1]
 print(circuit_fp)
 trojan_fp = sys.argv[2]
 # os.system(f'cat {circuit_fp} > inserted_trojan.v')
-result_fp = f'inserted_trojan.v'
+os.system('rm -rf garbage_temp.v')
+os.system('touch garbage_temp.v')
+result_fp = f'garbage_temp.v'
 print(circuit_fp)
 
 circuit_obj = cp(circuit_fp)
