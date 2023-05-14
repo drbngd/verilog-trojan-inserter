@@ -7,7 +7,6 @@
 # =============================================================================
 
 import os, sys, re, math, pandas as pd
-from trojanparser import TrojanParser
 
 
 
