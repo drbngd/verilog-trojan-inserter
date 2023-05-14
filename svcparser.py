@@ -26,7 +26,8 @@ class CircuitParser:
         input_re = r"^([^\/\/].*)?^\s*(input\s*((\s*.*\w+,*\s*)+\s*);)"
         output_re = r"^([^\/\/].*)?^\s*(output\s*((\s*.*\w+,*\s*)+\s*);)"
         wire_re = r"^([^\/\/].*)?^\s*(wire\s*((\s*.*\w+,*\s*)+\s*);)"
-        register_re = r"^([^\/\/].*)?^\s*((\w+)\s+(.+)\s*(\((\s*.\w+\s*\(\s*.+\s*\),*\s*)+\s*\)));"
+        #register_re = r"^([^\/\/].*)?^\s*((\w+)\s+(.+)\s*(\((\s*.\w+\s*\(\s*.+\s*\),*\s*)+\s*\)));"
+        register_re = r"^([^\/\/].*)?^\s*((\w+)\s+(.+)\s*(\((\s*.\w+\s*\(\s*.+\s*\),*\s*)+\s*\)));|(\w+)\s+(\w+)\s+(\((.*?)\));"
      
         file = open(filename, 'r').read()
 
@@ -71,10 +72,21 @@ class CircuitParser:
         # Find the registers
         matches = re.finditer(register_re, file, re.MULTILINE)
         for matchNum, match in enumerate(matches, start=1):
+            if match.group(3) == 'module' or match.group(7) == 'module':
+                continue
+            if match.group(3) is None and match.group(4) is None and match.group(5) is None:
+                register_type = match.group(7)
+                register_name = match.group(8)
+                register_args = re.sub(r'\s+', '', match.group(9))
+                self.registers.append((register_type, register_name, register_args))
+                print((register_type, register_name, register_args))
+                continue
+
             register_type = match.group(3)
             register_name = match.group(4)
             register_args = re.sub(r'\s+', '', match.group(5))
             self.registers.append((register_type, register_name, register_args))
+            print((register_type, register_name, register_args))
         print("Registers:", self.registers)
 
     def getModuleName(self):
