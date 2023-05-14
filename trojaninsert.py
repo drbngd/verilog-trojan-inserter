@@ -95,9 +95,7 @@ circuit_fp = sys.argv[1]
 print(circuit_fp)
 trojan_fp = sys.argv[2]
 # os.system(f'cat {circuit_fp} > inserted_trojan.v')
-os.system('rm -rf garbage.v')   # making sure no pre-existing version are used
-os.system('touch garbage.v')    # just an empty file to creat a new empty object
-result_fp = f'garbage.v'
+result_fp = f'inserted_trojan.v'
 print(circuit_fp)
 
 circuit_obj = cp(circuit_fp)
