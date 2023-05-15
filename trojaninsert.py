@@ -17,12 +17,14 @@ def getTrigNodes(filename, trojan_inputs, circuit_outputs):
     clock_search_text = ['clk', 'CLK', 'clock', 'CLOCK', 'Clock']
     reset_search_text = ['reset', 'RESET', 'Reset']
     num_input_nodes = sum([len(sublist) for sublist in trojan_inputs])-2
+    
     # asking user what he wants
     print('Choose the parameter on which you want to select the trigger nodes:')
     print('[1] P(low)')
     print('[2] P(high)')
     print('[3] Scope Value - \u221a(cc0^2 + cc1^2 + c0^2)')
-    
+
+
     choice = 0
     while True:
         choice = int(input('Choose an option:'))
@@ -44,6 +46,10 @@ def getTrigNodes(filename, trojan_inputs, circuit_outputs):
     if rndm == 'y' or rndm == 'Y':
         num_rndm = int(input('Enter the percentage (without the % sign): '))
     
+    '''param for satya bh'''
+    # sort_param = 'p_high'
+    # num_rndm = 100
+
     num_rndm = int(num_rndm * num_input_nodes / 100)
     num_not_rndm = num_input_nodes - num_rndm
 
@@ -284,29 +290,3 @@ result_obj.setRegisters(result_registers)
 
 
 result_obj.makeCircuit()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# parse trojan
-    # change the input, output, regnames
-
-# parse circuit
-    # find a payload
-    # change regnames
-    # get trigger nodes
-    # assign payload
