@@ -167,6 +167,6 @@ class CircuitParser:
         # add endmodule
         data += '\nendmodule'
 
-        result_filename = f'trjIN{self.module_name}.v'
+        result_filename = f'TRJ_INS_{self.module_name}.v'
         with open(result_filename, "w") as file:
             file.write(data)
