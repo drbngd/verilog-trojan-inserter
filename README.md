@@ -14,6 +14,7 @@ pip install pandas
 git clone https://github.com/drbngd/trojaninsertion_pub.git
 cd trojaninsertion_pub
 chmod +x prob
+
 ```
 
 ## Usage
