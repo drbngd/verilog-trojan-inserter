@@ -1,7 +1,7 @@
 # =============================================================================
 # author:       Dhruv Raj Bangad (bangaddj@mail.uc.edu)
 # purpose:      To insert the trojan into a circuit
-# usage:        
+# usage:        python3 trojaninsert.py path/to/circuit.v path/to/trojan.py
 # =============================================================================
 
 import os, sys, re, random, pandas as pd
