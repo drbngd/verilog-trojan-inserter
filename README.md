@@ -3,7 +3,7 @@
 ## About
 This repo contains the necessary files to insert a trojan file into any circuit file (verilog only).
 
-## Pre-req Py lib
+## Pre-req Python Library
 The pandas is required to run this code. Install it using pip as follows:
 ```
 pip install pandas
@@ -14,7 +14,6 @@ pip install pandas
 git clone https://github.com/drbngd/trojaninsertion_pub.git
 cd trojaninsertion_pub
 chmod +x prob
-pip install pandas
 ```
 
 ## Usage
