@@ -11,8 +11,8 @@ pip install pandas
 
 ## Setup
 ```
-git clone https://github.com/drbngd/trojaninsertion_pub.git
-cd trojaninsertion_pub
+https://github.com/drbngd/verilog-trojan-inserter.git
+cd verilog-trojan-inserter
 chmod +x prob
 
 ```
