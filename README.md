@@ -1,4 +1,4 @@
-# trojaninsertion_pub
+# Verilog Trojan Insertion Code
 
 ## About
 This repo contains the necessary files to insert a trojan file into any circuit file (verilog only).
